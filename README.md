@@ -28,6 +28,13 @@ When using Notifee with Expo SDK 51 and having `expo-updates` installed, there i
 6. Force close the application (ensure it's completely killed, not in background)
 7. Click on the notification
 
+## Video
+
+
+https://github.com/user-attachments/assets/300c950d-7a64-4e87-aba8-e2b7de315d0d
+
+
+
 ## Expected Behavior
 
 The application should open when clicking on the notification, even when the app is in a killed state.
