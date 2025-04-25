@@ -1,13 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { AppState, StyleSheet, Text, View } from 'react-native';
 import notifee, { AndroidImportance, TriggerType, TimestampTrigger } from '@notifee/react-native';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 notifee.onBackgroundEvent(async ({ type, detail }) => {
   console.log('onBackgroundEvent', type, detail);
 });
-
-
 
 export default function App() {
   useEffect(() => {
@@ -18,13 +16,13 @@ export default function App() {
         importance: AndroidImportance.HIGH,
       });
 
-      await notifee.requestPermission()
-    
+      await notifee.requestPermission();
+
       const trigger: TimestampTrigger = {
         type: TriggerType.TIMESTAMP,
         timestamp: Date.now() + 5000,
       };
-    
+
       // Create the notification
       await notifee.createTriggerNotification(
         {
@@ -40,22 +38,38 @@ export default function App() {
         },
         trigger,
       );
-    }
+    };
     createTriggerNotification();
   }, []);
 
   return (
     <View style={styles.container}>
       <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
+      <MyStatusBar />
     </View>
   );
 }
 
+// Workaround
+const MyStatusBar = () => {
+  const [active, setActive] = useState(AppState.currentState === 'active');
+  useEffect(() => {
+    if (active) return;
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state === 'active') setActive(true);
+    });
+    return () => subscription.remove();
+  }, [active]);
+
+  if (!active) return null;
+
+  return <StatusBar style="auto" />;
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#fcc',
     alignItems: 'center',
     justifyContent: 'center',
   },
